@@ -64,8 +64,58 @@ asmFunc:
      *            Lab 5 Division
      * Use it to test the C test code */
     
-    /*** STUDENTS: Place your code BELOW this line!!! **************/
+    /*** STUDENTS: Place your code BELOW this line!!! **************/  
+    
+    /* load all variables into their respective registers */
+    LDR r8, =dividend
+    LDR r3, [r8]
+    
+    LDR r9, =divisor
+    LDR r4, [r9]   
+    
+    LDR r10, =quotient
+    LDR r5, [r10]
+    
+    LDR r11, =mod
+    LDR r6, [r11]
+    
+    LDR r12, =we_have_a_problem
+    LDR r7, [r12]
+    
+    /* initialize all variables to 0 */
+    LDR r3, =0
+    LDR r4, =0
+    LDR r5, =0
+    LDR r6, =0
+    LDR r7, =0
+    
+    MOVS r3, r0           /* copy input value to dividend */
+    STR r3, [r8]          /* store dividend value in memory */
+    MOVS r4, r1           /* copy input value to divisor */
+    STR r4, [r9]          /* store divisor value in memory */
+    BEQ error             /* if dividend or divisor = 0, that's an error */
+    STR r5, [r10]         /* store 0 in quotient memory */
+    STR r6, [r11]         /* store 0 in modulo memory */
 
+do_again:
+    CMP r3, r4            /* compare dividend to divisor */
+    ADDGE r5, r5, 1      /* if dividend >= divisor, increment quotient by 1 */
+    SUBGE r3, r3, r4     /* if dividend >= divisor, subtract divisor from dividend until you get r */
+    BGE do_again          /* if divident >= divisor, loop process again; otherwise, move forward */
+    
+    LDR r0, =quotient     /* load address of quotient to input value */
+    STR r5, [r10]         /* store result of division calculation into quotient */
+    STR r3, [r11]         /* store result of modulo calculation into mod */
+    LDR r7, =0            /* make sure that an error hasn't occurred */
+    STR r7, [r12]
+    B done                /* branch to done */
+    
+    
+error:
+    LDR r7, =1            /* if dividend/divisor are 0, set error */
+    STR r7, [r12]         /* store error value to memory */
+    LDR r0, =quotient     /* load address of quotient into r0 */
+    B done                /* branch to done */
     
     /*** STUDENTS: Place your code ABOVE this line!!! **************/
 
